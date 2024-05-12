@@ -6,10 +6,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.runtime.Composable
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -18,13 +16,18 @@ import androidx.navigation.NavController
 import pl.poznan.put.student.reminder.database.entity.ReminderEntity
 import pl.poznan.put.student.reminder.navigation.Screen
 import pl.poznan.put.student.reminder.viewmodel.ReminderViewModel
+import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "DiscouragedApi")
 @Composable
-fun Screen.AddReminderScreen(navController: NavController, reminderEntity: ReminderEntity) {
+fun AddReminderScreen(navController: NavController) {
     val viewModel: ReminderViewModel = hiltViewModel()
     val context = LocalContext.current
     val scrollState = rememberScrollState()
+    var reminderName by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf(Date()) }
+    var selectedTime by remember { mutableStateOf(Date()) }
     Scaffold {
         Column(
             modifier = Modifier
@@ -33,11 +36,31 @@ fun Screen.AddReminderScreen(navController: NavController, reminderEntity: Remin
                 .fillMaxHeight()
         ) {
             // nazwa przypomnienia
-            TextField(
-                value = reminderEntity.title,
-                onValueChange = { viewModel.onNameChange(it) },
-//                label = Text("Nazwa")
+            OutlinedTextField(
+                value = reminderName,
+                onValueChange = { reminderName = it },
+                label = { Text("Nazwa przypomnienia") },
+                modifier = Modifier.padding(8.dp)
             )
+            // data przypomnienia
+            DatePicker(
+                state = rememberDatePickerState()
+
+            )
+            // czas przypomnienia
+            TimePicker(
+                state = rememberTimePickerState()
+            )
+            // przycisk zapisu
+            Button(
+                onClick = {
+//                    viewModel.addReminder(reminderEntity)
+                    navController.navigate(Screen.HomeScreen.route)
+                },
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text("Zapisz")
+            }
         }
     }
 }

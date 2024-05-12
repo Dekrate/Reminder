@@ -8,6 +8,7 @@ class ReminderEntity {
     @PrimaryKey(autoGenerate = false)
     var id: Int = 0
     var title: String = ""
-    var datetime: Long = 0
+    var date: Long = 0
+    var time: Long = 0
     var isDone: Boolean = false
 }

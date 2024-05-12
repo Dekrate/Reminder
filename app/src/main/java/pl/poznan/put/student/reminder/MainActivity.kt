@@ -44,7 +44,7 @@ fun MyApp() {
                 Column {
                     Row {
                         Text(text = "Reminder", modifier = Modifier.padding(16.dp))
-                        IconButton(onClick = { AddReminderScreen() }) {
+                        IconButton(onClick = { navController.navigate("add_reminder_screen") }) {
                             Icon(Icons.Default.Add, contentDescription = "Dodaj przypomnienie")
                         }
                         IconButton(onClick = { TODO() }) {

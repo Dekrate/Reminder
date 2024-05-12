@@ -30,7 +30,8 @@ class ReminderViewModel @Inject constructor(
                     ReminderDto(
                         id = trail.id,
                         title = trail.title,
-                        datetime = trail.datetime,
+                        date = trail.date,
+                        time = trail.time,
                         isDone = trail.isDone
                     )
                 }
@@ -79,18 +80,6 @@ class ReminderViewModel @Inject constructor(
     fun deleteById(id: Int) {
         viewModelScope.launch {
             reminderRepository.deleteById(id)
-        }
-    }
-
-    fun onNameChange(it: String) {
-        viewModelScope.launch {
-            val selectedReminder = _uiState.value.selectedReminder
-            selectedReminder?.let {
-                val updatedTrail = it.copy(title = it.title)
-                _uiState.update { state ->
-                    state.copy(selectedReminder = updatedTrail)
-                }
-            }
         }
     }
 

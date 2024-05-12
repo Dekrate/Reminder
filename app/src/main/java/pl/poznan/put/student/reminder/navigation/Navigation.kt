@@ -10,6 +10,7 @@ import androidx.navigation.NavHostController
 import pl.poznan.put.student.reminder.viewmodel.ReminderViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import pl.poznan.put.student.reminder.ui.AddReminderScreen
 
 @Composable
 fun Navigation(navController: NavHostController) {
@@ -26,7 +27,7 @@ fun Navigation(navController: NavHostController) {
             composable(
                 route = "add_reminder_screen"
             ) {
-//                AddReminderScreen(navController)
+                AddReminderScreen(navController)
             }
             composable(
                 route = "edit_reminder_screen/{id}"
