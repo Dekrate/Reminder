@@ -64,9 +64,9 @@ class ReminderViewModel @Inject constructor(
         }
     }
 
-    fun updateReminder(id: Int, title: String, datetime: Long, isDone: Boolean) {
+    fun updateReminder(reminder: ReminderEntity) {
         viewModelScope.launch {
-            reminderRepository.updateReminder(id, title, datetime, isDone)
+            reminderRepository.updateReminder(reminder)
         }
     }
 
@@ -79,6 +79,18 @@ class ReminderViewModel @Inject constructor(
     fun deleteById(id: Int) {
         viewModelScope.launch {
             reminderRepository.deleteById(id)
+        }
+    }
+
+    fun onNameChange(it: String) {
+        viewModelScope.launch {
+            val selectedReminder = _uiState.value.selectedReminder
+            selectedReminder?.let {
+                val updatedTrail = it.copy(title = it.title)
+                _uiState.update { state ->
+                    state.copy(selectedReminder = updatedTrail)
+                }
+            }
         }
     }
 

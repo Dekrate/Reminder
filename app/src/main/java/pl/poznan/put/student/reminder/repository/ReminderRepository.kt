@@ -19,9 +19,9 @@ class ReminderRepository @Inject constructor(
     suspend fun getReminder(id: Int) : ReminderEntity = withContext(ioDispatcher) {
         reminderDao.getReminderById(id)
     }
-    suspend fun updateReminder(id: Int, title: String, datetime: Long, isDone: Boolean) {
+    suspend fun updateReminder(reminder: ReminderEntity) {
         withContext(ioDispatcher) {
-            reminderDao.updateReminder(id, title, datetime, isDone)
+            reminderDao.updateReminder(reminder)
         }
     }
     suspend fun deleteAll() {

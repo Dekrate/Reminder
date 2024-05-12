@@ -2,10 +2,14 @@ package pl.poznan.put.student.reminder.navigation
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import pl.poznan.put.student.reminder.viewmodel.ReminderViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 
 @Composable
 fun Navigation(navController: NavHostController) {
@@ -15,44 +19,33 @@ fun Navigation(navController: NavHostController) {
     Box {
         NavHost(navController = navController, startDestination = "home_screen") {
             composable(
-                route = "list_screen"
+                route = "home_screen"
             ) {
-                if(configuration.screenWidthDp < 600) {
-                    TrailScreen(navController)
-                } else {
-                    TrailTabletScreen(navController)
-                }
+//                HomeScreen()
             }
             composable(
-                route = "list_alternative_screen"
+                route = "add_reminder_screen"
             ) {
-                if(configuration.screenWidthDp < 600) {
-                    TrailAlternativeScreen(navController)
-                } else {
-                    TrailTabletAlternativeScreen(navController = navController)
-                }
+//                AddReminderScreen(navController)
             }
             composable(
-                route = "start_screen"
-            ) {
-                StartScreen()
-            }
-            composable(
-                route = "splash_screen"
-            ) {
-                SpinningImage()
-            }
-            composable(
-                route = "details_screen/{id}"
+                route = "edit_reminder_screen/{id}"
             ) { backStackEntry ->
-                val trailId = backStackEntry.arguments?.getString("id")?.toInt()
-                trailId?.let { viewModel.getTrailById(it) }
-                val selectedTrailState =
-                    viewModel.uiState.collectAsState(TrailViewModel.State.DEFAULT).value.selectedTrail
+                val reminderId = backStackEntry.arguments?.getString("id")?.toInt()
+                reminderId?.let { viewModel.getReminderById(it) }
+                val selectedReminderState =
+                    viewModel.uiState.collectAsState(ReminderViewModel.State.DEFAULT).value.selectedReminder
 
-                selectedTrailState?.let { selectedTrail ->
-                    DetailsScreen(navController = navController, trailEntity = selectedTrail)
+                selectedReminderState?.let { selectedReminder ->
+//                    EditReminderScreen(navController = navController, reminderEntity = selectedReminder)
                 }
             }
+            composable(
+                route = "options_screen"
+            ) {
+//                OptionsScreen()
+            }
+
         }
+    }
     }

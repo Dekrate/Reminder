@@ -1,11 +1,13 @@
 package pl.poznan.put.student.reminder.database
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 import pl.poznan.put.student.reminder.database.entity.ReminderEntity
 
+@Dao
 interface ReminderDao {
     @Query("SELECT * FROM reminderentity")
     fun getAllReminders(): Flow<List<ReminderEntity>>
@@ -14,7 +16,7 @@ interface ReminderDao {
     @Query("SELECT COUNT(*) FROM reminderentity")
     suspend fun countReminders(): Int
     @Update
-    fun updateReminder(id: Int, title: String, datetime: Long, isDone: Boolean)
+    fun updateReminder(reminder: ReminderEntity)
     @Query("DELETE FROM reminderentity")
     suspend fun deleteAll()
     @Query("DELETE FROM reminderentity WHERE id = :id")
