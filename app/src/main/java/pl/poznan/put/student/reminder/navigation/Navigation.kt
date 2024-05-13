@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import pl.poznan.put.student.reminder.ui.AddReminderScreen
 import pl.poznan.put.student.reminder.ui.EditReminderScreen
 import pl.poznan.put.student.reminder.ui.HomeScreen
+import pl.poznan.put.student.reminder.ui.SettingsScreen
 
 @Composable
 fun Navigation(navController: NavHostController) {
@@ -44,9 +45,9 @@ fun Navigation(navController: NavHostController) {
                 }
             }
             composable(
-                route = "options_screen"
+                route = "settings_screen"
             ) {
-//                OptionsScreen()
+                SettingsScreen(navController)
             }
 
         }

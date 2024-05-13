@@ -47,7 +47,7 @@ fun MyApp() {
                         IconButton(onClick = { navController.navigate("add_reminder_screen") }) {
                             Icon(Icons.Default.Add, contentDescription = "Dodaj przypomnienie")
                         }
-                        IconButton(onClick = { TODO() }) {
+                        IconButton(onClick = { navController.navigate("settings_screen") }) {
                             Icon(Icons.Default.Settings, contentDescription = "Opcje")
                         }
                     }

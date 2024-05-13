@@ -25,4 +25,10 @@ object DatabaseModule {
     fun provideTrailDao(database: AppDatabase): ReminderDao {
         return database.reminderDao()
     }
+
+    @Provides
+    @Singleton
+    fun provideReminderDao(database: AppDatabase): SettingsDao {
+        return database.settingsDao()
+    }
 }

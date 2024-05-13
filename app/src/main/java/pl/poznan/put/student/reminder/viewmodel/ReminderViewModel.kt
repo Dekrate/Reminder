@@ -10,13 +10,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import pl.poznan.put.student.reminder.database.entity.SettingsEntity
+import pl.poznan.put.student.reminder.list.SettingsDto
+import pl.poznan.put.student.reminder.repository.SettingsRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class ReminderViewModel @Inject constructor(
-    private val reminderRepository: ReminderRepository
+    private val reminderRepository: ReminderRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(State.DEFAULT)
     val uiState: Flow<State> = _uiState
@@ -39,6 +44,11 @@ class ReminderViewModel @Inject constructor(
                     state.copy(reminderDtos = mappedTrails)
                 }
             }
+            val mappedSettings = settingsRepository.getSettings().map { settings ->
+                SettingsDto(
+                    fingerprint = settings.fingerprint
+                )
+            }
         }
     }
 
@@ -56,11 +66,13 @@ class ReminderViewModel @Inject constructor(
     data class State(
         val reminderDtos: List<ReminderDto>,
         val selectedReminder: ReminderEntity?,
+        val settingsDto: SettingsDto
     ) {
         companion object {
             val DEFAULT = State(
                 reminderDtos = emptyList(),
                 selectedReminder = null,
+                settingsDto = SettingsDto(fingerprint = false)
             )
         }
     }
@@ -88,6 +100,13 @@ class ReminderViewModel @Inject constructor(
             reminderRepository.insertReminder(reminder)
         }
     }
+
+    fun updateSettings(settingsEntity: SettingsEntity) {
+        viewModelScope.launch {
+            settingsRepository.updateSettings(settingsEntity)
+        }
+    }
+
 
     sealed class Event {
 
