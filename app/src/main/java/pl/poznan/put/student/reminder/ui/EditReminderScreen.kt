@@ -1,5 +1,6 @@
 package pl.poznan.put.student.reminder.ui
 
+
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,13 +24,13 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "DiscouragedApi")
 @Composable
-fun AddReminderScreen(navController: NavController) {
+fun EditReminderScreen(navController: NavController, reminderEntity: ReminderEntity) {
     val viewModel: ReminderViewModel = hiltViewModel()
     val context = LocalContext.current
     val scrollState = rememberScrollState()
-    var reminderName by remember { mutableStateOf("") }
-    val dateState = rememberDatePickerState(selectableDates = FutureSelectableDates)
-    val timeState = rememberTimePickerState()
+    var reminderName by remember { mutableStateOf(reminderEntity.title) }
+    val dateState = rememberDatePickerState(selectableDates = FutureSelectableDates, initialSelectedDateMillis = reminderEntity.date)
+    val timeState = rememberTimePickerState(initialHour = (reminderEntity.time / 3600).toInt(), initialMinute = (reminderEntity.time % 3600 / 60).toInt())
     val snackHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     Scaffold {
@@ -57,7 +58,6 @@ fun AddReminderScreen(navController: NavController) {
             // przycisk zapisu
             Button(
                 onClick = {
-                    val reminderEntity = ReminderEntity()
                     reminderEntity.title = reminderName
                     val hour = timeState.hour
                     val minute = timeState.minute
@@ -97,10 +97,10 @@ fun AddReminderScreen(navController: NavController) {
 
 
 
-                    viewModel.insertReminder(reminderEntity)
+                    viewModel.updateReminder(reminderEntity)
                     scope.launch {
                         snackHostState.showSnackbar(
-                            message = "Dodano przypomnienie"
+                            message = "Zmodyfikowano przypomnienie"
                         )
                     }
 
@@ -112,17 +112,6 @@ fun AddReminderScreen(navController: NavController) {
                 Text("Zapisz")
             }
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-object FutureSelectableDates : SelectableDates {
-    override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-            return utcTimeMillis >= System.currentTimeMillis()
-        }
-
-    override fun isSelectableYear(year: Int): Boolean {
-        return year >= LocalDate.now().year
     }
 }
 

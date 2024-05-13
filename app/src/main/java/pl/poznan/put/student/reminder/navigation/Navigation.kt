@@ -11,6 +11,8 @@ import pl.poznan.put.student.reminder.viewmodel.ReminderViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import pl.poznan.put.student.reminder.ui.AddReminderScreen
+import pl.poznan.put.student.reminder.ui.EditReminderScreen
+import pl.poznan.put.student.reminder.ui.HomeScreen
 
 @Composable
 fun Navigation(navController: NavHostController) {
@@ -22,7 +24,7 @@ fun Navigation(navController: NavHostController) {
             composable(
                 route = "home_screen"
             ) {
-//                HomeScreen()
+                HomeScreen(navController)
             }
             composable(
                 route = "add_reminder_screen"
@@ -38,7 +40,7 @@ fun Navigation(navController: NavHostController) {
                     viewModel.uiState.collectAsState(ReminderViewModel.State.DEFAULT).value.selectedReminder
 
                 selectedReminderState?.let { selectedReminder ->
-//                    EditReminderScreen(navController = navController, reminderEntity = selectedReminder)
+                EditReminderScreen(navController = navController, reminderEntity = selectedReminder)
                 }
             }
             composable(

@@ -83,6 +83,12 @@ class ReminderViewModel @Inject constructor(
         }
     }
 
+    fun insertReminder(reminder: ReminderEntity) {
+        viewModelScope.launch {
+            reminderRepository.insertReminder(reminder)
+        }
+    }
+
     sealed class Event {
 
     }
