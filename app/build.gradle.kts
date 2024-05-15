@@ -53,6 +53,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("androidx.compose.ui:ui-graphics-android:1.6.7")
     implementation("androidx.compose.material3:material3-android:1.2.1")
+    implementation("com.google.android.gms:play-services-location:21.2.0")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-common:2.6.1")
     implementation("androidx.room:room-runtime:2.6.1")
@@ -75,7 +76,9 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3:1.2.1")
+    implementation("com.squareup.retrofit2:converter-scalars:2.11.0")
     implementation("androidx.activity:activity-ktx:1.9.0")
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
 }
+

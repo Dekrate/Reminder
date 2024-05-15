@@ -1,5 +1,6 @@
 package pl.poznan.put.student.reminder.ui
 
+import android.content.pm.PackageManager
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -13,16 +14,23 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
+import pl.poznan.put.student.reminder.MainActivity
 import pl.poznan.put.student.reminder.database.entity.ReminderEntity
 import pl.poznan.put.student.reminder.list.ReminderDto
 import pl.poznan.put.student.reminder.viewmodel.ReminderViewModel
-import java.time.Instant
-import java.time.ZoneId
+import java.time.*
 import java.time.format.DateTimeFormatter
+import java.util.*
+import kotlin.math.abs
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -55,6 +63,10 @@ fun HomeScreen(navController: NavController) {
 @Composable
 fun ReminderTile(navController: NavController, reminderDto: ReminderDto) {
     val viewModel: ReminderViewModel = hiltViewModel()
+    val activity: MainActivity = LocalContext.current as MainActivity
+    var latitude: Double = 0.0
+    var longitude: Double = 0.0
+    var fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(activity)
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -100,7 +112,35 @@ fun ReminderTile(navController: NavController, reminderDto: ReminderDto) {
                     },
                 modifier = Modifier.padding(8.dp)
             )
+            // check if location permission is granted
+            if (LocalContext.current.
+                checkCallingOrSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+                val result = fusedLocationClient.getCurrentLocation(
+                    Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+                    CancellationTokenSource().token,
+                )
+                result.let { fetchedLocation ->
+                    longitude = fetchedLocation.result.longitude
+                    latitude = fetchedLocation.result.latitude
+                }
 
+                // get weather from api
+                val url: String = "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,weather_code&timezone=auto"
+                // map date long to date object
+                val dateMapped: LocalDate = Instant.ofEpochMilli(reminderDto.date)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                val timeMapped: LocalTime = Instant.ofEpochMilli(reminderDto.time)
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalTime()
+                val dateTime = LocalDateTime.of(dateMapped, timeMapped)
+                // check if the date is < 7 days
+                if (abs(dateTime.compareTo(LocalDateTime.now())) < 7) {
+                    // TODO obsługa api okhttp
+                }
+
+            }
         }
     }
 }

@@ -66,13 +66,15 @@ class ReminderViewModel @Inject constructor(
     data class State(
         val reminderDtos: List<ReminderDto>,
         val selectedReminder: ReminderEntity?,
-        val settingsDto: SettingsDto
+        val settingsDto: SettingsDto,
+        val location: String = ""
     ) {
         companion object {
             val DEFAULT = State(
                 reminderDtos = emptyList(),
                 selectedReminder = null,
-                settingsDto = SettingsDto(fingerprint = false)
+                settingsDto = SettingsDto(fingerprint = false),
+                location = ""
             )
         }
     }
