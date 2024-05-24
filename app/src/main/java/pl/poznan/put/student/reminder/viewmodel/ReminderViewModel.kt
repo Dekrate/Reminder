@@ -1,5 +1,7 @@
 package pl.poznan.put.student.reminder.viewmodel
 
+import android.app.PendingIntent
+import android.content.Intent
 import pl.poznan.put.student.reminder.database.entity.ReminderEntity
 import pl.poznan.put.student.reminder.list.ReminderDto
 import pl.poznan.put.student.reminder.repository.ReminderRepository
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import pl.poznan.put.student.reminder.ReminderBroadcastReceiver
 import pl.poznan.put.student.reminder.database.entity.SettingsEntity
 import pl.poznan.put.student.reminder.list.SettingsDto
 import pl.poznan.put.student.reminder.repository.SettingsRepository
@@ -21,9 +24,9 @@ import javax.inject.Inject
 @HiltViewModel
 class ReminderViewModel @Inject constructor(
     private val reminderRepository: ReminderRepository,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow(State.DEFAULT)
+    val _uiState = MutableStateFlow(State.DEFAULT)
     val uiState: Flow<State> = _uiState
     private val eventChannel = Channel<Event>(Channel.CONFLATED)
 
@@ -56,9 +59,9 @@ class ReminderViewModel @Inject constructor(
 
     fun getReminderById(id: Int) {
         viewModelScope.launch {
-            val selectedTrail = reminderRepository.getReminder(id)
+            val selectedReminder = reminderRepository.getReminder(id)
             _uiState.update { state ->
-                state.copy(selectedReminder = selectedTrail)
+                state.copy(selectedReminder = selectedReminder)
             }
         }
     }

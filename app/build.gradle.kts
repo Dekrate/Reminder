@@ -80,5 +80,10 @@ dependencies {
     implementation("androidx.activity:activity-ktx:1.9.0")
     implementation("androidx.room:room-ktx:2.6.1")
     implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("com.fasterxml.jackson.core:jackson-core:2.10.1")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.10.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.10.1")
+    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
 }
 

@@ -9,4 +9,7 @@ import pl.poznan.put.student.reminder.database.entity.SettingsEntity
 abstract class AppDatabase : RoomDatabase() {
     abstract fun reminderDao(): ReminderDao
     abstract fun settingsDao(): SettingsDao
+    // sharedpreferences
+    // mapa
+    // cykl życia aplikacji
 }

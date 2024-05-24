@@ -26,9 +26,16 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import pl.poznan.put.student.reminder.MainActivity
 import pl.poznan.put.student.reminder.database.entity.ReminderEntity
 import pl.poznan.put.student.reminder.list.ReminderDto
+import pl.poznan.put.student.reminder.model.RetrofitClient
+import pl.poznan.put.student.reminder.model.Weather
+import pl.poznan.put.student.reminder.model.WeatherApiService
 import pl.poznan.put.student.reminder.viewmodel.ReminderViewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.time.*
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.math.abs
 
@@ -117,17 +124,19 @@ fun ReminderTile(navController: NavController, reminderDto: ReminderDto) {
                 checkCallingOrSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
                 val result = fusedLocationClient.getCurrentLocation(
-                    Priority.PRIORITY_BALANCED_POWER_ACCURACY,
+                    Priority.PRIORITY_HIGH_ACCURACY,
                     CancellationTokenSource().token,
                 )
-                result.let { fetchedLocation ->
-                    longitude = fetchedLocation.result.longitude
-                    latitude = fetchedLocation.result.latitude
-                }
+//                result.let { fetchedLocation ->
+//                    longitude = fetchedLocation.result.longitude
+//                    latitude = fetchedLocation.result.latitude
+//                }
 
-                // get weather from api
-                val url: String = "https://api.open-meteo.com/v1/forecast?latitude=$latitude&longitude=$longitude&hourly=temperature_2m,weather_code&timezone=auto"
-                // map date long to date object
+                longitude = 13.41
+                latitude = 52.52
+
+//                 get weather from api
+//                 map date long to date object
                 val dateMapped: LocalDate = Instant.ofEpochMilli(reminderDto.date)
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate()
@@ -135,11 +144,14 @@ fun ReminderTile(navController: NavController, reminderDto: ReminderDto) {
                     .atZone(ZoneId.systemDefault())
                     .toLocalTime()
                 val dateTime = LocalDateTime.of(dateMapped, timeMapped)
-                // check if the date is < 7 days
+//                 check if the date is < 7 days
                 if (abs(dateTime.compareTo(LocalDateTime.now())) < 7) {
-                    // TODO obsługa api okhttp
+                    val temperature = fetchWeatherData(latitude, longitude, dateMapped)
+                    Text(
+                        text = "Temperatura: $temperature",
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
-
             }
         }
     }
@@ -156,4 +168,29 @@ fun formatTime(seconds: Long): String {
     val minutes = (seconds % 3600) / 60
     val secs = seconds % 60
     return String.format("%02d:%02d:%02d", hours, minutes, secs)
+}
+
+fun fetchWeatherData(latitude: Double, longitude: Double, localDate: LocalDate): Double {
+    val weatherApiService: WeatherApiService by lazy {
+        RetrofitClient.instance.create(WeatherApiService::class.java)
+    }
+    var temperature: Double = -273.15
+    val call = weatherApiService.getWeather(latitude, longitude)
+    call.enqueue(object : Callback<Weather> {
+        override fun onResponse(call: Call<Weather>, response: Response<Weather>) {
+            if (response.isSuccessful) {
+                val weather = response.body()
+
+                val temperatures = weather?.daily?.temperature2mMax
+                // calculate days from today
+                val days = ChronoUnit.DAYS.between(LocalDate.now(), localDate)
+                temperature = temperatures?.get(days.toInt() - 1)!!
+            }
+        }
+
+        override fun onFailure(p0: Call<Weather>, p1: Throwable) {
+
+        }
+    })
+    return temperature
 }
