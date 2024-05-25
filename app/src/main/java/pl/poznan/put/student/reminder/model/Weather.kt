@@ -27,5 +27,5 @@ data class DailyUnits(
 data class Daily(
     val time: List<String>,
     @JsonProperty("temperature_2m_max")
-    val temperature2mMax: List<Double>,
+    val temperature_2m_max: List<Double>,
 )

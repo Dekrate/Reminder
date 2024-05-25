@@ -6,7 +6,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface WeatherApiService {
-    @GET("/forecast") // Zmień na właściwy endpoint
+    @GET("/v1/forecast") // Zmień na właściwy endpoint
     fun getWeather(
         @Query("latitude") latitude: Double,
         @Query("longitude") longitude: Double,

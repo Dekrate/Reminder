@@ -1,5 +1,6 @@
 package pl.poznan.put.student.reminder.ui
 
+import android.content.Context
 import android.content.Intent
 import android.hardware.biometrics.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import android.os.Environment
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.content.edit
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.google.gson.Gson
@@ -35,6 +37,12 @@ fun SettingsScreen(navController: NavController) {
     val settingsDto = state.value.settingsDto
     val context = LocalContext.current
     var searchText by remember { mutableStateOf("") }
+    val sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
+
+    var isFingerprintEnabled by remember {
+        mutableStateOf(sharedPreferences.getBoolean("reminder_fingerprint_enabled", false))
+    }
+
     val getContentLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
             val inputStream = context.contentResolver.openInputStream(uri)
@@ -42,26 +50,39 @@ fun SettingsScreen(navController: NavController) {
             val gson = Gson()
             val reminders = gson.fromJson(content, Array<ReminderDto>::class.java)
             val existingReminders = viewModel._uiState.value.reminderDtos
-            for (reminder in reminders) {
-                for (existingReminder in existingReminders) {
-                    if (reminder.id == existingReminder.id) {
-                        continue
-                    } else if (reminder.title == existingReminder.title) {
-                        continue
-                    } else {
-                        val entity = ReminderEntity().apply {
-                            id = reminder.id
-                            title = reminder.title
-                            date = reminder.date
-                            time = reminder.time
-                            isDone = reminder.isDone
-                        }
+            if (existingReminders.isEmpty()) {
+                for (reminder in reminders) {
+                    val entity = ReminderEntity().apply {
+                        id = reminder.id
+                        title = reminder.title
+                        date = reminder.date
+                        time = reminder.time
+                        isDone = reminder.isDone
+                    }
 
-                        viewModel.insertReminder(entity)
+                    viewModel.insertReminder(entity)
+                }
+            } else {
+                for (reminder in reminders) {
+                    for (existingReminder in existingReminders) {
+                        if (reminder.id == existingReminder.id) {
+                            continue
+                        } else if (reminder.title == existingReminder.title) {
+                            continue
+                        } else {
+                            val entity = ReminderEntity().apply {
+                                id = reminder.id
+                                title = reminder.title
+                                date = reminder.date
+                                time = reminder.time
+                                isDone = reminder.isDone
+                            }
+
+                            viewModel.insertReminder(entity)
+                        }
                     }
                 }
             }
-
         }
     }
     val biometricManager = BiometricManager.from(context)
@@ -70,12 +91,20 @@ fun SettingsScreen(navController: NavController) {
         Row {
             Text("Użyj odcisku palca", modifier = Modifier.fillMaxWidth())
             Checkbox(
-                checked = settingsDto.fingerprint,
+                checked = isFingerprintEnabled,
                 // niech ten checkbox będzie po prawej stronie
                 enabled = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG or DEVICE_CREDENTIAL) == BiometricManager.BIOMETRIC_SUCCESS,
-                onCheckedChange = {
-                    settingsDto.fingerprint = !settingsDto.fingerprint
-                    viewModel.updateSettings(SettingsEntity().apply { fingerprint = !settingsDto.fingerprint }) },
+                onCheckedChange = { isChecked ->
+                    isFingerprintEnabled = isChecked
+                    // Zapisz nową wartość do SharedPreferences
+                    sharedPreferences.edit {
+                        putBoolean("reminder_fingerprint_enabled", isChecked)
+                    }
+                    Toast.makeText(context, isFingerprintEnabled.toString(), Toast.LENGTH_SHORT).show()
+                    // wyświetl komunikat
+                }
+
+
             )
 
         }
