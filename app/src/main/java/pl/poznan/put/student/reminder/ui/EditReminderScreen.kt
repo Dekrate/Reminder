@@ -2,6 +2,12 @@ package pl.poznan.put.student.reminder.ui
 
 
 import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
@@ -15,12 +21,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
+import pl.poznan.put.student.reminder.ReminderBroadcastReceiver
 import pl.poznan.put.student.reminder.database.entity.ReminderEntity
 import pl.poznan.put.student.reminder.navigation.Screen
 import pl.poznan.put.student.reminder.viewmodel.ReminderViewModel
 import java.time.Instant
 import java.time.LocalDate
 
+@RequiresApi(Build.VERSION_CODES.S)
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter", "DiscouragedApi")
 @Composable
@@ -94,8 +102,17 @@ fun EditReminderScreen(navController: NavController, reminderEntity: ReminderEnt
                         }
                         return@Button
                     }
-
-
+                    val oldIntent = Intent(context, ReminderBroadcastReceiver::class.java)
+                    val oldPendingIntent = PendingIntent.getBroadcast(context, reminderEntity.id, oldIntent,
+                        PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE)
+                    oldPendingIntent?.cancel()
+                    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                    val newIntent = Intent(context, ReminderBroadcastReceiver::class.java)
+                    newIntent.putExtra("REMINDER_TITLE", reminderEntity.title)
+                    val newPendingIntent = PendingIntent.getBroadcast(context, reminderEntity.id, newIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+                    val triggerAtMillis = reminderEntity.date + reminderEntity.time * 1000 - (3600*1000*2)
+                    if (alarmManager.canScheduleExactAlarms())
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerAtMillis, newPendingIntent)
 
                     viewModel.updateReminder(reminderEntity)
                     scope.launch {

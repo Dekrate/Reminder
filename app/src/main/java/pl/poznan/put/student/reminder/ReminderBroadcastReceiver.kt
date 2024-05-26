@@ -1,26 +1,27 @@
 package pl.poznan.put.student.reminder
 
-import android.annotation.SuppressLint
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
 class ReminderBroadcastReceiver : BroadcastReceiver() {
-    @SuppressLint("MissingPermission")
     override fun onReceive(context: Context, intent: Intent) {
-        val reminderText = intent.getStringExtra("REMINDER_TEXT") ?: "Przypomnienie"
+        val reminderTitle = intent.getStringExtra("REMINDER_TITLE") ?: "Przypomnienie"
 
         val notificationManager = NotificationManagerCompat.from(context)
 
         // Tworzenie kanału powiadomień
         val channel = NotificationChannel(
-            "REMINDER_CHANNEL",
+            CHANNEL_ID,
             "Przypomnienia",
             NotificationManager.IMPORTANCE_HIGH
         )
@@ -30,17 +31,28 @@ class ReminderBroadcastReceiver : BroadcastReceiver() {
         val openAppIntent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
-        val openAppPendingIntent = PendingIntent.getActivity(context, 0, openAppIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val openAppPendingIntent = PendingIntent.getActivity(context, 0, openAppIntent, PendingIntent.FLAG_IMMUTABLE)
 
         // Budowanie powiadomienia
-        val builder = NotificationCompat.Builder(context, "REMINDER_CHANNEL")
-//            .setSmallIcon(R.drawable.ic_reminder) // Ikona powiadomienia
-            .setContentTitle("Przypomnienie")
-            .setContentText(reminderText)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setContentTitle(reminderTitle)
+            .setSmallIcon(R.drawable.logo)
+            .setContentText("Masz nowe przypomnienie!")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(openAppPendingIntent)
             .setAutoCancel(true)
 
-        notificationManager.notify(intent.getIntExtra("REMINDER_ID", 0), builder.build())
+        if (ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationManager.notify(NOTIFICATION_ID, builder.build())
+        }
+    }
+
+    companion object {
+        const val CHANNEL_ID = "reminder_channel"
+        const val NOTIFICATION_ID = 1
     }
 }

@@ -1,5 +1,7 @@
 package pl.poznan.put.student.reminder.ui
 
+import android.app.PendingIntent
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -22,6 +24,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import pl.poznan.put.student.reminder.MainActivity
+import pl.poznan.put.student.reminder.ReminderBroadcastReceiver
 import pl.poznan.put.student.reminder.database.entity.ReminderEntity
 import pl.poznan.put.student.reminder.list.ReminderDto
 import pl.poznan.put.student.reminder.model.RetrofitClient
@@ -31,7 +34,9 @@ import pl.poznan.put.student.reminder.viewmodel.ReminderViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.time.*
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
@@ -110,7 +115,11 @@ fun ReminderTile(navController: NavController, reminderDto: ReminderDto) {
                     navController.navigate("edit_reminder_screen/${reminderDto.id}")
                 },
                 onLongClick = {
+
                     viewModel.deleteById(reminderDto.id)
+                    val intent = Intent(activity, ReminderBroadcastReceiver::class.java)
+                    val pendingIntent = PendingIntent.getBroadcast(activity, reminderDto.id, intent, PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE)
+                    pendingIntent?.cancel()
                     // odśwież listę przypomnień
                     navController.navigate("home_screen")
                 })
@@ -172,14 +181,15 @@ fun ReminderTile(navController: NavController, reminderDto: ReminderDto) {
                 val dateMapped: LocalDate = Instant.ofEpochMilli(reminderDto.date)
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate()
-                if (abs(ChronoUnit.DAYS.between(LocalDate.now(), dateMapped)) < 7) {
+                val daysComparison = ChronoUnit.DAYS.between(LocalDate.now(), dateMapped)
+                if (daysComparison in 0..6) {
                     Text(
                         text = "$temperature°C",
                         modifier = Modifier.padding(8.dp).weight(2f)
                     )
                 } else {
                     Text(
-                        text = "Brak danych",
+                        text = "Brak",
                         modifier = Modifier.padding(8.dp).weight(2f)
                     )
                 }
@@ -212,7 +222,12 @@ fun fetchWeatherData(latitude: Double, longitude: Double, localDate: LocalDate, 
                 val weather = response.body()
                 val temperatures = weather?.daily?.temperature_2m_max
                 val days = ChronoUnit.DAYS.between(LocalDate.now(), localDate)
-                val temperature = temperatures?.get(days.toInt() - 1)
+                val index = days.toInt()
+                if (index < 0) {
+                    callback(null)
+                    return
+                }
+                val temperature = temperatures?.get(index)
                 callback(temperature)
             } else {
                 callback(null)

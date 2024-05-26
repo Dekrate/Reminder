@@ -1,6 +1,8 @@
 package pl.poznan.put.student.reminder
 
 import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.hardware.biometrics.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import android.os.Build
@@ -40,6 +42,14 @@ class MainActivity : FragmentActivity() {
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val name = "Przypomnienia"
+        val descriptionText = "Kanał powiadomień dla przypomnień"
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val channel = NotificationChannel(ReminderBroadcastReceiver.CHANNEL_ID, name, importance).apply {
+            description = descriptionText
+        }
+        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
 
         val sharedPreferences = getSharedPreferences("settings", Context.MODE_PRIVATE)
         val isFingerprintEnabled = sharedPreferences.getBoolean("reminder_fingerprint_enabled", false)
@@ -105,7 +115,9 @@ class MainActivity : FragmentActivity() {
                 if (isAuthenticated) {
                     locationPermissionRequest.launch(arrayOf(
                         android.Manifest.permission.ACCESS_FINE_LOCATION,
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION
+                        android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                        android.Manifest.permission.POST_NOTIFICATIONS,
+                        android.Manifest.permission.SCHEDULE_EXACT_ALARM
                     ))
                     setContent {
                         TrailsTheme {
@@ -120,7 +132,9 @@ class MainActivity : FragmentActivity() {
             // No need to authenticate, proceed directly
             locationPermissionRequest.launch(arrayOf(
                 android.Manifest.permission.ACCESS_FINE_LOCATION,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.POST_NOTIFICATIONS,
+                android.Manifest.permission.SCHEDULE_EXACT_ALARM
             ))
             setContent {
                 TrailsTheme {
