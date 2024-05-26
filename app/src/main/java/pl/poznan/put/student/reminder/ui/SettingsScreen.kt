@@ -1,8 +1,6 @@
 package pl.poznan.put.student.reminder.ui
 
 import android.content.Context
-import android.content.Intent
-import android.hardware.biometrics.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import android.os.Environment
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -20,23 +18,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.google.gson.Gson
-import pl.poznan.put.student.reminder.MainActivity
 import pl.poznan.put.student.reminder.database.entity.ReminderEntity
-import pl.poznan.put.student.reminder.database.entity.SettingsEntity
 import pl.poznan.put.student.reminder.list.ReminderDto
 import pl.poznan.put.student.reminder.viewmodel.ReminderViewModel
 import java.io.File
 import java.io.FileOutputStream
 
 @Composable
-fun SettingsScreen(navController: NavController) {
+fun SettingsScreen() {
     val viewModel: ReminderViewModel = hiltViewModel()
-    val state = viewModel.uiState.collectAsState(initial = ReminderViewModel.State.DEFAULT)
-    val settingsDto = state.value.settingsDto
     val context = LocalContext.current
-    var searchText by remember { mutableStateOf("") }
     val sharedPreferences = context.getSharedPreferences("settings", Context.MODE_PRIVATE)
 
     var isFingerprintEnabled by remember {
@@ -46,6 +38,7 @@ fun SettingsScreen(navController: NavController) {
     val getContentLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
             val inputStream = context.contentResolver.openInputStream(uri)
+            inputStream?.close()
             val content = inputStream?.bufferedReader().use { it?.readText() }
             val gson = Gson()
             val reminders = gson.fromJson(content, Array<ReminderDto>::class.java)
@@ -66,9 +59,9 @@ fun SettingsScreen(navController: NavController) {
                 for (reminder in reminders) {
                     for (existingReminder in existingReminders) {
                         if (reminder.id == existingReminder.id) {
-                            continue
+                            break
                         } else if (reminder.title == existingReminder.title) {
-                            continue
+                            break
                         } else {
                             val entity = ReminderEntity().apply {
                                 id = reminder.id

@@ -5677,3 +5677,12 @@
 {"ts":1716724034843,"action":"IDE_ACTIVATED"}
 {"ts":1716724040767,"action":"IDE_DEACTIVATED"}
 {"ts":1716724076470,"action":"IDE_ACTIVATED"}
+{"ts":1716724124666,"action":"FILE_OPENED","file":"/app/src/main/java/pl/poznan/put/student/reminder/ui/AddReminderScreen.kt","tags":{"FILE_LINE_OF_CODE":"145"}}
+{"ts":1716724126764,"action":"FILE_CLOSED","file":"/app/src/main/java/pl/poznan/put/student/reminder/ui/AddReminderScreen.kt","tags":{"FILE_LINE_OF_CODE":"145"}}
+{"ts":1716724126764,"action":"FILE_OPENED","file":"/app/src/main/java/pl/poznan/put/student/reminder/ui/HomeScreen.kt","tags":{"FILE_LINE_OF_CODE":"241"}}
+{"ts":1716724135258,"action":"FILE_CLOSED","file":"/app/src/main/java/pl/poznan/put/student/reminder/ui/HomeScreen.kt","tags":{"FILE_LINE_OF_CODE":"241"}}
+{"ts":1716724135258,"action":"FILE_OPENED","file":"/app/src/main/java/pl/poznan/put/student/reminder/ui/SettingsScreen.kt","tags":{"FILE_LINE_OF_CODE":"151"}}
+{"ts":1716724231875,"action":"IDE_DEACTIVATED"}
+{"ts":1716724270830,"action":"IDE_ACTIVATED"}
+{"ts":1716724273307,"action":"IDE_DEACTIVATED"}
+{"ts":1716724311688,"action":"IDE_ACTIVATED"}
