@@ -5751,3 +5751,9 @@
 {"ts":1716976318837,"action":"FILE_OPENED","file":"/app/src/main/java/pl/poznan/put/student/reminder/ui/AddReminderScreen.kt","tags":{"FILE_LINE_OF_CODE":"144"}}
 {"ts":1716976327487,"action":"FILE_CLOSED","file":"/app/src/main/java/pl/poznan/put/student/reminder/ui/AddReminderScreen.kt","tags":{"FILE_LINE_OF_CODE":"144"}}
 {"ts":1716976327487,"action":"FILE_OPENED","file":"/app/src/main/java/pl/poznan/put/student/reminder/navigation/Navigation.kt","tags":{"FILE_LINE_OF_CODE":"56"}}
+{"ts":1716976333880,"action":"FILE_CLOSED","file":"/app/src/main/java/pl/poznan/put/student/reminder/navigation/Navigation.kt","tags":{"FILE_LINE_OF_CODE":"56"}}
+{"ts":1716976333880,"action":"FILE_OPENED","file":"/app/src/main/java/pl/poznan/put/student/reminder/ui/AddReminderScreen.kt","tags":{"FILE_LINE_OF_CODE":"144"}}
+{"ts":1716976337736,"action":"FILE_CLOSED","file":"/app/src/main/java/pl/poznan/put/student/reminder/ui/AddReminderScreen.kt","tags":{"FILE_LINE_OF_CODE":"145"}}
+{"ts":1716976337736,"action":"FILE_OPENED","file":"/app/src/main/java/pl/poznan/put/student/reminder/ui/SettingsScreen.kt","tags":{"FILE_LINE_OF_CODE":"142"}}
+{"ts":1716976339296,"action":"FILE_CLOSED","file":"/app/src/main/java/pl/poznan/put/student/reminder/ui/SettingsScreen.kt","tags":{"FILE_LINE_OF_CODE":"142"}}
+{"ts":1716976339296,"action":"FILE_OPENED","file":"/app/src/main/java/pl/poznan/put/student/reminder/ui/AddReminderScreen.kt","tags":{"FILE_LINE_OF_CODE":"145"}}

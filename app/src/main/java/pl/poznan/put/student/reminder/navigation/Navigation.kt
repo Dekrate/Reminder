@@ -1,5 +1,7 @@
 package pl.poznan.put.student.reminder.navigation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -11,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import pl.poznan.put.student.reminder.ui.*
 
+@RequiresApi(Build.VERSION_CODES.S)
 @Composable
 fun Navigation(navController: NavHostController) {
 
