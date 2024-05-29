@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHost
 import androidx.navigation.NavHostController
 import pl.poznan.put.student.reminder.viewmodel.ReminderViewModel
 import androidx.navigation.compose.NavHost
@@ -49,7 +48,7 @@ fun Navigation(navController: NavHostController) {
             composable(
                 route = "settings_screen"
             ) {
-                SettingsScreen(navController)
+                SettingsScreen()
             }
 
         }

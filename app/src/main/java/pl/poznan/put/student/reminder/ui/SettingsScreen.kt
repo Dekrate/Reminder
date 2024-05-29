@@ -38,7 +38,6 @@ fun SettingsScreen() {
     val getContentLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
             val inputStream = context.contentResolver.openInputStream(uri)
-            inputStream?.close()
             val content = inputStream?.bufferedReader().use { it?.readText() }
             val gson = Gson()
             val reminders = gson.fromJson(content, Array<ReminderDto>::class.java)
@@ -106,11 +105,7 @@ fun SettingsScreen() {
             horizontalArrangement = Arrangement.SpaceEvenly) {
             Button(onClick = {
                 // każ użytkownikowi wybrać plik z którego chce importować
-
                 getContentLauncher.launch("application/json")
-
-
-
 
             },
                 modifier = Modifier
@@ -126,6 +121,9 @@ fun SettingsScreen() {
                 val json = gson.toJson(reminders)
                 // zapisz go do pliku w folderze documents
                 val file = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "reminders.json")
+                if (file.exists()) {
+                    file.delete()
+                }
                 FileOutputStream(file).use {
                     it.write(json.toByteArray())
                 }

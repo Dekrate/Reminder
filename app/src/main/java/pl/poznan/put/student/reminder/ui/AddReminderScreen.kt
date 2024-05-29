@@ -36,8 +36,7 @@ fun AddReminderScreen(navController: NavController) {
     val context = LocalContext.current
     val scrollState = rememberScrollState()
     var reminderName by remember { mutableStateOf("") }
-//    val dateState = rememberDatePickerState(selectableDates = FutureSelectableDates)
-    val dateState = rememberDatePickerState()
+    val dateState = rememberDatePickerState(selectableDates = FutureSelectableDates)
     val timeState = rememberTimePickerState()
     val snackHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
